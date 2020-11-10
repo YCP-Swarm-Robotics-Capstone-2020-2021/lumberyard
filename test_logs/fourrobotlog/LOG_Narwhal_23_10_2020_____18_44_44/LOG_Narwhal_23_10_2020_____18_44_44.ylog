@@ -1,0 +1,11 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LOG FILE:       ./LOG_Narwhal_23_10_2020_____18_44_44/LOG_Narwhal_23_10_2020_____18_44_44.ylog
+%% FILE OPENED ON  Wed Dec 31 19:00:00 1969
+%% LOGSTART               1603493083.52
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1.252066   MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin3 registration message received. Sending acknowledgment. 
+1.2521     MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin1 registration message received. Sending acknowledgment. 
+1.252105   MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin2 registration message received. Sending acknowledgment. 
+1.252108   MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin0 registration message received. Sending acknowledgment. 
+1.252108   MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin0 registration message received. Sending acknowledgment. 
+1.252108   MOOS_DEBUG           SwarmHandler         SwarmHandler: Dolphin0 registration message received. Sending acknowledgment. 
