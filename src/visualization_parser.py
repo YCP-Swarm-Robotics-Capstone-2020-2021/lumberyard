@@ -2,6 +2,7 @@
 
 import itertools
 import re
+import json
 
 file = open("../test_logs/onerobotlog/LOG_Dolphin0_23_10_2020_____18_51_42/LOG_Dolphin0_23_10_2020_____18_51_42.alog", "r")
 
@@ -23,19 +24,30 @@ for line in itertools.islice(file, 5, None):
             (lhs, rhs) = item.split('=')
             items[lhs] = rhs
 
-        if 'xPos' in items and 'yPos' in items and 'attitude' in items:
-            positions[time] = \
+        if 'id' in items:
+            positions.setdefault(time, set()).add(json.dumps(
                 {
-                    "xPos": items['xPos'],
-                    "yPos": items['yPos'],
-                    "attitude": items['attitude'],
+                    'id': items['id'],
+                    'xPos': float(items.get('xPos') or 0.0),
+                    'yPos': float(items.get('yPos') or 0.0),
+                    'attitude': float(items.get('attitude') or 270.0),
                 }
+            ))
 
-# Adjust timestamps so that they all begin at 0
-adjusted_positions = {}
-time_diff = list(positions.keys())[0]
+output = {}
 for time, data in positions.items():
-    adjusted_positions[str(round(float(time) - float(time_diff), 3))] = data
+    output[time] = list(map(lambda a: json.loads(a), data))
 
-for ((k1, v1), (k2, v2)) in zip(positions.items(), adjusted_positions.items()):
-    print("{{{}: {}}} - {{{}: {}}}".format(k1, v1, k2, v2))
+print(json.dumps(output, indent=4))
+""
+# Adjust timestamps so that they all begin at 0
+# adjusted_positions = {}
+# time_diff = list(positions.keys())[0]
+# for time, data in positions.items():
+#     list_data = []
+#     for d in data:
+#         list_data.append(json.loads(d))
+#     adjusted_positions[str(round(float(time) - float(time_diff), 3))] = list_data
+#
+# for (a, b) in zip(positions.items(), adjusted_positions.items()):
+#     print("{} - {}".format(a, b))
