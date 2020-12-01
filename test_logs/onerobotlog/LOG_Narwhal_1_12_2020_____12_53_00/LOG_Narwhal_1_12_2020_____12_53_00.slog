@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LOG FILE:       ./logs/2020-12-01-12-52-57_Mission_Numbots-1/LOG_Narwhal_1_12_2020_____12_53_00/LOG_Narwhal_1_12_2020_____12_53_00.slog
+%% FILE OPENED ON  Wed Dec 31 16:00:00 1969
+%% LOGSTART               1606855979.56
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%   (1) TIME 
+%%   (2) Accel
+%%   (3) Batt_Health
+%%   (4) Change_State
+%%   (5) Comm_Ping
+%%   (6) Current_Pos
+%%   (7) id
+%%   (8) Motor_Odom
+%%   (9) Speed_Curv
+%%   (10) Update_Pos
+%%   (11) Veh_Health
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          [   0.66]          
+0.8667428          NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          [   0.87]          
+1.869205           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+2.873149           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+3.875687           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+4.878411           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+5.880995           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+6.884173           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+7.887579           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+8.891205           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+9.89573            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+10.89905           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+11.90247           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+12.90679           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+13.91164           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+14.91489           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+15.91872           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+16.92201           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+17.9257            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+18.93024           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+19.93381           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+20.93714           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+21.9409            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+22.9463            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+23.94966           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+24.95321           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+25.95736           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+26.96147           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+27.96562           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+28.96993           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+29.97421           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+30.98021           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          [  30.98]          
+31.98314           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+32.98723           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+33.9902            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+34.99415           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+35.99718           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+36.99986           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+38.0045            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+39.00822           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+40.01247           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+41.01662           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+42.01987           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+43.02371           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+44.02698           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+45.03008           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+46.03426           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+47.03776           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+48.04061           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+49.04594           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+50.04819           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+51.05304           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+52.05801           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+53.06247           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+54.06618           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+55.06854           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+56.07404           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+57.07946           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+58.08371           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+59.08737           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+60.09156           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+61.0949            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          [  61.09]          
+62.09984           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+63.1049            NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+64.11021           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+65.11525           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+66.11901           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+67.12195           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+68.12518           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+69.13108           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+70.13526           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+71.14038           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+72.14405           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+73.14739           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+74.15077           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+75.15543           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+76.16052           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+77.16426           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+78.16711           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+79.17006           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+80.17614           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+81.17917           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+82.18324           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+83.18832           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+84.19291           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+85.19771           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+86.20108           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+87.20501           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+88.20867           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+89.21229           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+90.21648           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+91.22057           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          [  91.22]          
+92.22453           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+93.22834           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+94.232             NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+95.23629           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+96.23959           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+97.24535           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+98.24981           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+99.25423           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+100.2581           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+101.2625           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+102.2668           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+103.2703           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+104.2743           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+105.2775           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+106.2815           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+107.2851           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+108.2884           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+109.2933           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+111.2268           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+112.2302           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+113.2349           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+114.2398           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+115.2437           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+116.2486           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+117.2545           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+118.2628           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+119.2675           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+120.2715           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+121.2754           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+122.2814           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+%% TIME            Accel              Batt_Health        Change_State       Comm_Ping          Current_Pos        id                 Motor_Odom         Speed_Curv         Update_Pos         Veh_Health         
+%% TIME            [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          [ 122.28]          
+123.2842           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
+124.2881           NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                NaN                
