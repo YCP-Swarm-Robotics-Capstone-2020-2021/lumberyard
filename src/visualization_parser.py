@@ -40,7 +40,7 @@ output = {}
 for time, data in positions.items():
     output[time] = list(map(lambda a: json.loads(a), data))
 
-output = {"offset": list(positions.keys())[0], "timestamps": output}
+output = {"offset": float(list(positions.keys())[0]), "timestamps": output}
 
 file.close()
 file = open(file_path + ".script", "w+")
