@@ -4,7 +4,8 @@ import itertools
 import re
 import json
 
-file = open("../test_logs/onerobotlog/LOG_Dolphin0_23_10_2020_____18_51_42/LOG_Dolphin0_23_10_2020_____18_51_42.alog", "r")
+file_path = "../test_logs/tworobotlog/LOG_Narwhal_1_12_2020_____12_55_43/LOG_Narwhal_1_12_2020_____12_55_43.alog"
+file = open(file_path, "r")
 
 positions = {}
 
@@ -15,7 +16,7 @@ for line in itertools.islice(file, 5, None):
     (time, module, _, data) = line.split(maxsplit=3)
 
     # We only care about the robot reporting a new position
-    if module == 'Update_Pos':
+    if 'Update_Pos' in module:
         # Remove all whitespace from data
         data = re.sub(r'\s+', '', data).split(',')
 
@@ -31,6 +32,7 @@ for line in itertools.islice(file, 5, None):
                     'xPos': float(items.get('xPos') or 0.0),
                     'yPos': float(items.get('yPos') or 0.0),
                     'attitude': float(items.get('attitude') or 270.0),
+                    'current_speed': float(items.get('current_speed') or 0.0)
                 }
             ))
 
@@ -38,7 +40,15 @@ output = {}
 for time, data in positions.items():
     output[time] = list(map(lambda a: json.loads(a), data))
 
+output = {"offset": list(positions.keys())[0], "timestamps": output}
+
+file.close()
+file = open(file_path + ".script", "w+")
+file.write(json.dumps(output))
+file.close()
+
 print(json.dumps(output, indent=4))
+
 ""
 # Adjust timestamps so that they all begin at 0
 # adjusted_positions = {}
