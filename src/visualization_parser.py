@@ -29,8 +29,8 @@ for line in itertools.islice(file, 5, None):
             positions.setdefault(time, set()).add(json.dumps(
                 {
                     'id': items['id'],
-                    'xPos': round(float(items.get('xPos') or 0.0), 3),
-                    'yPos': round(float(items.get('yPos') or 0.0), 3),
+                    'x_pos': round(float(items.get('xPos') or 0.0), 3),
+                    'y_pos': round(float(items.get('yPos') or 0.0), 3),
                     'attitude': round(float(items.get('attitude') or 270.0), 3),
                     'current_speed': round(float(items.get('current_speed') or 0.0), 3)
                 }
@@ -40,7 +40,15 @@ output = {}
 for time, data in positions.items():
     output[time] = list(map(lambda a: json.loads(a), data))
 
-output = {"offset": float(list(positions.keys())[0]), "timestamps": output}
+output = \
+    {
+        # Add information about the first and last timestamp
+        # This may be unnecessary, but it's just one less thing that has to be calculated by the visualization
+        # software while loading a script
+        "first_timestamp": float(list(positions.keys())[0]),
+        "last_timestamp": float(list(positions.keys())[-1]),
+        "timestamps": output
+    }
 
 file.close()
 file = open(file_path + ".script", "w+")
