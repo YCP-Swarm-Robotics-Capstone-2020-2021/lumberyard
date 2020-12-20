@@ -29,10 +29,10 @@ for line in itertools.islice(file, 5, None):
             positions.setdefault(time, set()).add(json.dumps(
                 {
                     'id': items['id'],
-                    'xPos': float(items.get('xPos') or 0.0),
-                    'yPos': float(items.get('yPos') or 0.0),
-                    'attitude': float(items.get('attitude') or 270.0),
-                    'current_speed': float(items.get('current_speed') or 0.0)
+                    'xPos': round(float(items.get('xPos') or 0.0), 3),
+                    'yPos': round(float(items.get('yPos') or 0.0), 3),
+                    'attitude': round(float(items.get('attitude') or 270.0), 3),
+                    'current_speed': round(float(items.get('current_speed') or 0.0), 3)
                 }
             ))
 
