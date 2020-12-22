@@ -103,9 +103,19 @@ while current_time <= end_time:
 
     current_time = round(current_time + TIME_INCREMENT, TIME_ROUNDING)
 
+# Change the values of parsed into lists rather than dictionaries
+# This is to prevent many small hashmaps from being created while deserializing the script in the visualization
+listified_parsed = dict()
+for (time, robots) in parsed.items():
+    listified_parsed[time] = list()
+    for (robot_id, data) in robots.items():
+        # Add the robot id into the object so it can still be identified
+        data["id"] = robot_id
+        listified_parsed[time].append(data)
+
 print(json.dumps(parsed, indent=4))
 
-output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": end_time, "steps": parsed}
+output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": end_time, "timestamps": listified_parsed}
 
 file.close()
 file = open(file_path + ".script", "w+")
