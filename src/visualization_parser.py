@@ -6,7 +6,8 @@ import itertools
 import re
 import json
 
-file_path = "../test_logs/tworobotlog/LOG_Narwhal_1_12_2020_____12_55_43/LOG_Narwhal_1_12_2020_____12_55_43.alog"
+#file_path = "../test_logs/tworobotlog/LOG_Narwhal_1_12_2020_____12_55_43/LOG_Narwhal_1_12_2020_____12_55_43.alog"
+file_path = "../test_logs/sixrobotlog/LOG_Narwhal_1_12_2020_____13_01_34/LOG_Narwhal_1_12_2020_____13_01_34.alog"
 file = open(file_path, "r")
 
 # To which decimal place should the timestamp be rounded
@@ -98,7 +99,7 @@ while current_time <= end_time:
     # For the current time entry in the parsed data, fill in any missing robots with their last known data
     # if the robot is still known to be connected
     for (robot_id, data) in prev_data.items():
-        if robot_id not in parsed[current_time] and robot_id in connected_robots:
+        if robot_id not in parsed[current_time] and robot_id in connected_robots[current_time]:
             parsed[current_time][robot_id] = data
 
     current_time = round(current_time + TIME_INCREMENT, TIME_ROUNDING)
