@@ -38,8 +38,8 @@
 1.220           Dolphin0_Update_Pos  StageInterface  xPos=6.93325e-310,yPos=4.94066e-324,id=Dolphin0, attitude=4.94066e-324, current_speed=1.97626e-323 
 1.220           Dolphin1_Update_Pos  StageInterface  xPos=4.94066e-324,yPos=4.74303e-322,id=Dolphin1, attitude=2.56914e-322, current_speed=4.94066e-324 
 1.245           Dolphin0_Update_Pos  StageInterface  xPos=-4,yPos=7,id=Dolphin0, attitude=270, current_speed=0 
-1.245           Dolphin1_Update_Pos  StageInterface  xPos=-1,yPos=7,id=Dolphin1, attitude=270, current_speed=0 
-1.252           MOOS_DEBUG           SwarmHandler    SwarmHandler: Dolphin1 registration message received. Sending acknowledgment. 
+1.245           Dolphin1_Update_Pos  StageInterface  xPos=-1,yPos=7,id=Dolphin1, attitude=270, current_speed=0
+1.252           MOOS_DEBUG           SwarmHandler    SwarmHandler: Dolphin1 registration message received. Sending acknowledgment.
 1.252           Dolphin1_Reg_Ack     SwarmHandler    true 
 1.252           MOOS_DEBUG           SwarmHandler    SwarmHandler: Dolphin0 registration message received. Sending acknowledgment. 
 1.252           Dolphin0_Reg_Ack     SwarmHandler    true 
