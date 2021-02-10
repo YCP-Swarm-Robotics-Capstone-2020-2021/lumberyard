@@ -116,11 +116,13 @@ for time in parsed.keys():
                 # If it is robot's first update time, make last updated
                 if robot_id not in last_updated_times.keys():
                     last_updated_times[robot_id] = time
+                    # Add 'id' field and append to updated list
                     data['id'] = robot_id
                     parsed[time]['updated'].append(data)
                     continue
                 else:
                     # Get robot's data from it's last updated time
+                    # Add 'id' field
                     last_updated_time = last_updated_times[robot_id]
                     prev_data = parsed[last_updated_time][robot_id]
                     data['id'] = robot_id
@@ -141,27 +143,29 @@ for time in parsed.keys():
             del parsed[time][robot_id]
             parsed[time]['notUpdated'].append(robot_id)
 
+# Remove any first level 'Dolphin__: {}' objects, since there is now a first level 'updated: []' list for each timestamp
 for time in parsed.keys():
     if parsed[time]:
         for data in parsed[time]['updated']:
             del parsed[time][data['id']]
 
-print(json.dumps(parsed, indent=4))
-
 # Change the values of parsed into lists rather than dictionaries
 # This is to prevent many small hashmaps from being created while deserializing the script in the visualization
-# listified_parsed = dict()
-# for (time, robots) in parsed.items():
-#     listified_parsed[time] = list()
-#     for (robot_id, data) in robots.items():
-#         # Add the robot id into the object so it can still be identified
-#         if(robot_id != 'updated'):
-#             data["id"] = 'updated'
-#         else:
-#             data['id'] = 'notUpdated'
-#         listified_parsed[time].append(data)
+listified_parsed = dict()
+for (time, states) in parsed.items():
+    if parsed[time]:
+        updated_data = states['updated']
+        not_updated_date = states['notUpdated']
 
-#print(json.dumps(parsed, indent=4))
+        listified_parsed[time] = {"updated": [], "notUpdated": []}
+
+        listified_parsed[time]['updated'] = updated_data
+        listified_parsed[time]['notUpdated'] = not_updated_date
+    else:
+        parsed[time]['updated'] = []
+        parsed[time]['notUpdated'] = []
+
+print(json.dumps(parsed, indent=4))
 
 output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": end_time, "timestamps": listified_parsed}
 
