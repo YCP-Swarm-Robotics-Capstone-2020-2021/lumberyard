@@ -110,14 +110,14 @@ last_updated_times = dict()  # dict(k: robot_id, v: time)
 for time in parsed.keys():
     if parsed[time]:
         idle_robots = []
-        parsed[time]['updated'] = {'robot_ids': []}
+        parsed[time]['updated'] = []
         for (robot_id, data) in parsed[time].items():
             if robot_id != 'updated':
                 # If it is robot's first update time, make last updated
                 if robot_id not in last_updated_times.keys():
                     last_updated_times[robot_id] = time
                     data['id'] = robot_id
-                    parsed[time]['updated']['robot_ids'].append(data)
+                    parsed[time]['updated'].append(data)
                     continue
                 else:
                     # Get robot's data from it's last updated time
@@ -130,20 +130,20 @@ for time in parsed.keys():
                     # If different, update last_updated_times
                     if prev_data != data:
                         last_updated_times[robot_id] = time
-                        parsed[time]['updated']['robot_ids'].append(data)
+                        parsed[time]['updated'].append(data)
                     else:
                         idle_robots.append(robot_id)
 
         # Add 'notUpdated' object to each timestamp
-        parsed[time]['notUpdated'] = {'robot_ids': []}
+        parsed[time]['notUpdated'] = []
         # For each idle robot for this timestamp delete it's entry, and add robot_id to 'notUpdated' object
         for robot_id in idle_robots:
             del parsed[time][robot_id]
-            parsed[time]['notUpdated']['robot_ids'].append(robot_id)
+            parsed[time]['notUpdated'].append(robot_id)
 
 for time in parsed.keys():
     if parsed[time]:
-        for data in parsed[time]['updated']['robot_ids']:
+        for data in parsed[time]['updated']:
             del parsed[time][data['id']]
 
 print(json.dumps(parsed, indent=4))
