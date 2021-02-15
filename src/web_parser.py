@@ -4,9 +4,6 @@ import itertools
 import re
 import json
 
-
-# TODO Make script a function that accepts file, file path as a parameter
-
 file_path = "../test_logs/sixrobotlog/LOG_Dolphin0_1_12_2020_____13_01_34/LOG_Dolphin0_1_12_2020_____13_01_34.alog"
 opened_file = open(file_path, "r")
 
@@ -30,10 +27,15 @@ def web_parser(file):
     else:
         print('Log neither Dolphin nor Narwhal')
 
-    # Parse date from file path
+    # Parse date and time from file path
+    # The leading _ differentiates the date and time from robot id
     matches = re.findall(r'_[0-9]+_[0-9]+_[0-9]+', file.name)
+
+    # Split the date and time from the underscores
     date_parts = matches[0].split('_')
     time_parts = matches[1].split('_')
+
+    # Recreate the date and times with appropriate separator
     date = '-'.join(date_parts[1:])
     time = ':'.join(time_parts[1:])
 
