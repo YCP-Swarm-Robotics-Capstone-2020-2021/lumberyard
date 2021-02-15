@@ -19,7 +19,7 @@ def web_parser(file):
         print("This is a Dolphin log")
         log_type = "Dolphin"
         # Extract dolphin id
-        robot_match = re.search(r'LOG_Dolphin\d+', file.name)
+        robot_match = re.search(r'Dolphin\d+', file.name)
         if robot_match.group(0):
             robot_id = robot_match.group(0)
         else:
