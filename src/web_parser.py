@@ -3,6 +3,7 @@
 import itertools
 import re
 import json
+import sys
 
 file_path = "../test_logs/sixrobotlog/LOG_Dolphin0_1_12_2020_____13_01_34/LOG_Dolphin0_1_12_2020_____13_01_34.alog"
 opened_file = open(file_path, "r")
@@ -14,34 +15,39 @@ def web_parser(file):
     if "LOG_Narwhal" in file.name:
         print("This is a Narwhal log")
         log_type = "Narwhal"
-        robot_id = "Narwhal"
-    elif "LOG_Dolphin" in file_path:
+        device_id = "Narwhal"
+    elif "LOG_Dolphin" in file.name:
         print("This is a Dolphin log")
         log_type = "Dolphin"
         # Extract dolphin id
         robot_match = re.search(r'Dolphin\d+', file.name)
-        if robot_match.group(0):
-            robot_id = robot_match.group(0)
-        else:
-            print("Error searching for robot id")
+        # if robot_match.group(0):
+        try:
+            device_id = robot_match.group(0)
+        except AttributeError:
+            print('Error finding robot id from file name')
+            sys.exit(1)
     else:
         print('Log neither Dolphin nor Narwhal')
+        sys.exit(1)
 
     # Parse date and time from file path
     # The leading _ differentiates the date and time from robot id
     matches = re.findall(r'_[0-9]+_[0-9]+_[0-9]+', file.name)
+    try:
+        # Split the date and time from the underscores
+        date_parts = matches[0].split('_')
+        time_parts = matches[1].split('_')
 
-    # Split the date and time from the underscores
-    date_parts = matches[0].split('_')
-    time_parts = matches[1].split('_')
-
-    # Recreate the date and times with appropriate separator
-    date = '-'.join(date_parts[1:])
-    time = ':'.join(time_parts[1:])
-
+        # Recreate the date and times with appropriate separator
+        date = '-'.join(date_parts[1:])
+        time = ':'.join(time_parts[1:])
+    except IndexError:
+        print('Error getting date and time from file name')
+        sys.exit(1)
     # Parsed script data
     parsed = {
-        "robot_id": robot_id,
+        "device_id": device_id,
         "date": date,
         "time": time,
         "log_type": log_type,
@@ -63,6 +69,7 @@ def web_parser(file):
 
     # Close log file
     file.close()
+
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
     file = open(file.name + ".json", "w+")
