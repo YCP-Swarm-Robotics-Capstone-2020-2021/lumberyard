@@ -7,7 +7,7 @@ import json
 
 # TODO Make script a function that accepts file, file path as a parameter
 
-file_path = "../test_logs/sixrobotlog/LOG_Narwhal_1_12_2020_____13_01_34/LOG_Narwhal_1_12_2020_____13_01_34.alog"
+file_path = "../test_logs/sixrobotlog/LOG_Dolphin0_1_12_2020_____13_01_34/LOG_Dolphin0_1_12_2020_____13_01_34.alog"
 opened_file = open(file_path, "r")
 
 
@@ -31,11 +31,11 @@ def web_parser(file):
         print('Log neither Dolphin nor Narwhal')
 
     # Parse date from file path
-    matches = re.findall(r'[0-9]+_[0-9]+_[0-9]+', file.name)
+    matches = re.findall(r'_[0-9]+_[0-9]+_[0-9]+', file.name)
     date_parts = matches[0].split('_')
     time_parts = matches[1].split('_')
-    date = '-'.join(date_parts)
-    time = ':'.join(time_parts)
+    date = '-'.join(date_parts[1:])
+    time = ':'.join(time_parts[1:])
 
     # Which robots are reported as being connected at each timestamp
     connected_robots = dict()
