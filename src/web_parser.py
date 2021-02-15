@@ -5,23 +5,40 @@ import re
 import json
 
 
+# TODO Make script a function that accepts file, file path as a parameter
+
 file_path = "../test_logs/sixrobotlog/LOG_Narwhal_1_12_2020_____13_01_34/LOG_Narwhal_1_12_2020_____13_01_34.alog"
 file = open(file_path, "r")
 
-log_type = ''
+# Check to see what type of log file this is, and set log_type and robot_id appropriately
 if "LOG_Narwhal" in file_path:
     print("This is a Narwhal log")
     log_type = "Narwhal"
+    robot_id = "Narwhal"
 elif "LOG_Dolphin" in file_path:
     print("This is a Dolphin log")
     log_type = "Dolphin"
+    # Extract dolphin id
+    robot_match = re.search(r'LOG_Dolphin\d+', file_path)
+    if robot_match.group(0):
+        robot_id = robot_match.group(0)
+    else:
+        print("Error searching for robot id")
+else:
+    print('Log neither Dolphin nor Narwhal')
+
+# Parse date from file path
+date_match = re.search(r'_[0-9]+_[0-9]+_[0-9]+_', file_path)
+date_parts = date_match.group(0).split('_')
+date = '-'.join(date_parts[1:4])
 
 # Which robots are reported as being connected at each timestamp
 connected_robots = dict()
 
 # Parsed script data
 parsed = {
-    "date": "date",
+    "robot_id": robot_id,
+    "date": date,
     "log_type": log_type,
     "log_content": []
 }
@@ -39,10 +56,9 @@ for line in itertools.islice(file, 5, None):
 
     parsed['log_content'].append(parsed_line)
 
-
-
 # Close log file
 file.close()
+print(json.dumps(parsed))
 # Open new json file, write the json contents, and close it
 file = open(file_path + ".json", "w+")
 file.write(json.dumps(parsed))
