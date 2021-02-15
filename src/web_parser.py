@@ -39,9 +39,6 @@ def web_parser(file):
     date = '-'.join(date_parts[1:])
     time = ':'.join(time_parts[1:])
 
-    # Which robots are reported as being connected at each timestamp
-    connected_robots = dict()
-
     # Parsed script data
     parsed = {
         "robot_id": robot_id,
