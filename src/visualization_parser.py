@@ -119,7 +119,6 @@ for time in parsed.keys():
                     # Add 'id' field and append to updated list
                     data['id'] = robot_id
                     parsed[time]['updated'].append(data)
-                    continue
                 else:
                     # Get robot's data from it's last updated time
                     # Add 'id' field
