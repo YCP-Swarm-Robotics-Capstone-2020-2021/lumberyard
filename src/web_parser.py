@@ -27,6 +27,7 @@ def web_parser(file):
         except AttributeError:
             print('Error finding robot id from file name')
             sys.exit(1)
+    # If the log does not contain dolphin or narwhal exit the parser
     else:
         print('Log neither Dolphin nor Narwhal')
         sys.exit(1)
@@ -42,9 +43,12 @@ def web_parser(file):
         # Recreate the date and times with appropriate separator
         date = '-'.join(date_parts[1:])
         time = ':'.join(time_parts[1:])
+
+    # If the splits fail, they will throw an index error, which is caught here
     except IndexError:
         print('Error getting date and time from file name')
         sys.exit(1)
+
     # Parsed script data
     parsed = {
         "device_id": device_id,
