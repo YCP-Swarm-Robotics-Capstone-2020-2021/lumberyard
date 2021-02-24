@@ -80,4 +80,4 @@ def web_parser(file_path):
 
 
 def visualization_parser(file_path):
-    pass
+    print("Log file parsed into visualization script")
