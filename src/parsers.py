@@ -4,9 +4,11 @@ import json
 import sys
 
 
-# Parameter is an opened file, rather than a file path
+# Parameter is the file path of the log
 def web_parser(file_path):
+    # Open the log file in read mode
     file = open(file_path, 'r')
+
     # Check to see what type of log file this is, and set log_type and robot_id appropriately
     if "LOG_Narwhal" in file.name:
         print("This is a Narwhal log")
@@ -76,3 +78,6 @@ def web_parser(file_path):
     file.write(json.dumps(parsed))
     file.close()
 
+
+def visualization_parser(file_path):
+    pass
