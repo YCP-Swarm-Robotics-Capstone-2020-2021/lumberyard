@@ -104,15 +104,65 @@ while current_time <= end_time:
 
     current_time = round(current_time + TIME_INCREMENT, TIME_ROUNDING)
 
+# Remove any non updated robots for a given timestamp
+# Last time updated pos for each robot
+last_updated_times = dict()  # dict(k: robot_id, v: time)
+for time in parsed.keys():
+    if parsed[time]:
+        idle_robots = []
+        parsed[time]['updated'] = []
+        for (robot_id, data) in parsed[time].items():
+            if robot_id != 'updated':
+                # If it is robot's first update time, make last updated
+                if robot_id not in last_updated_times.keys():
+                    last_updated_times[robot_id] = time
+                    # Add 'id' field and append to updated list
+                    data['id'] = robot_id
+                    parsed[time]['updated'].append(data)
+                else:
+                    # Get robot's data from it's last updated time
+                    # Add 'id' field
+                    last_updated_time = last_updated_times[robot_id]
+                    prev_data = parsed[last_updated_time][robot_id]
+                    data['id'] = robot_id
+
+                    # Compare with current data
+                    # If same, add to idle_robots list
+                    # If different, update last_updated_times
+                    if prev_data != data:
+                        last_updated_times[robot_id] = time
+                        parsed[time]['updated'].append(data)
+                    else:
+                        idle_robots.append(robot_id)
+
+        # Add 'notUpdated' object to each timestamp
+        parsed[time]['notUpdated'] = []
+        # For each idle robot for this timestamp delete it's entry, and add robot_id to 'notUpdated' object
+        for robot_id in idle_robots:
+            del parsed[time][robot_id]
+            parsed[time]['notUpdated'].append(robot_id)
+
+# Remove any first level 'Dolphin__: {}' objects, since there is now a first level 'updated: []' list for each timestamp
+for time in parsed.keys():
+    if parsed[time]:
+        for data in parsed[time]['updated']:
+            del parsed[time][data['id']]
+
 # Change the values of parsed into lists rather than dictionaries
 # This is to prevent many small hashmaps from being created while deserializing the script in the visualization
 listified_parsed = dict()
-for (time, robots) in parsed.items():
-    listified_parsed[time] = list()
-    for (robot_id, data) in robots.items():
-        # Add the robot id into the object so it can still be identified
-        data["id"] = robot_id
-        listified_parsed[time].append(data)
+for (time, states) in parsed.items():
+    if parsed[time]:
+        updated_data = states['updated']
+        not_updated_date = states['notUpdated']
+
+        listified_parsed[time] = {"updated": [], "notUpdated": []}
+
+        listified_parsed[time]['updated'] = updated_data
+        listified_parsed[time]['notUpdated'] = not_updated_date
+    else:
+        parsed[time]['updated'] = []
+        parsed[time]['notUpdated'] = []
 
 print(json.dumps(parsed, indent=4))
 
