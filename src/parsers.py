@@ -75,16 +75,15 @@ def web_parser(file_path):
 
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
-    file = open(file.name + ".json", "w+")
-    file.write(json.dumps(parsed))
-    file.close()
+    # file = open(file.name + ".json", "w+")
+    return json.dumps(parsed)
+
 
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
 def visualization_parser(file_path):
     file = open(file_path, "r")
-
     # To which decimal place should the timestamp be rounded
     TIME_ROUNDING = 1
     # The increment in which the current time should progess when generating the final script.
@@ -239,7 +238,7 @@ def visualization_parser(file_path):
             parsed[time]['updated'] = []
             parsed[time]['notUpdated'] = []
 
-    print(json.dumps(parsed, indent=4))
+    # print(json.dumps(parsed, indent=4))
 
     output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": end_time,
               "timestamps": listified_parsed}
