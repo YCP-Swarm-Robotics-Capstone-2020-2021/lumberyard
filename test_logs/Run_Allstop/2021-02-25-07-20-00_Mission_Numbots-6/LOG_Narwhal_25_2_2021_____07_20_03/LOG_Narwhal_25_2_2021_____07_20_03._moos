@@ -1,0 +1,152 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LOG FILE:       ./logs/2021-02-25-07-20-00_Mission_Numbots-6/LOG_Narwhal_25_2_2021_____07_20_03/LOG_Narwhal_25_2_2021_____07_20_03._moos
+%% FILE OPENED ON  Wed Dec 31 16:00:00 1969
+%% LOGSTART               1614266402.63
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ServerHost = localhost
+ServerPort = 9000
+Community  = Narwhal
+
+ProcessConfig = ANTLER
+{
+    MSBetweenLaunches = 200
+    Run = MOOSDB    @ NewConsole = false
+    Run = ../modules/StageInterface/bin/StageInterface @ NewConsole = false ~ StageInterface
+    Run = ../modules/ControlGUI/bin/ControlGUI  @ NewConsole = false ~ ControlGUI
+    Run = ../modules/SwarmHandler/bin/SwarmHandler @ NewConsole = false ~ SwarmHandler
+    Run = uProcessWatch @ NewConsole = false ~ uProcessWatch
+    Run = pLogger @ NewConsole = false ~ pLogger
+    Run = pShare @ NewConsole = false ~pShare
+}
+
+//------------------------------------------------
+// StageInterface config block
+ProcessConfig = StageInterface
+{
+   AppTick      = 40
+   CommsTick    = 40
+   WorldFile    = ../world/2021_02_25_07_20_00___6.world
+
+   NumBots      = 6
+}
+
+ProcessConfig = SwarmHandler
+{
+   AppTick      = 4
+   CommsTick    = 4
+}
+
+ProcessConfig = uProcessWatch
+{
+    watch_all = false
+    watch = StageInterface,pLogger,pShare,SwarmHandler
+}
+
+ProcessConfig = pLogger
+{
+    AppTick = 5
+    CommsTick = 5
+    File = LOG_Narwhal
+    PATH = ./logs/2021-02-25-07-20-00_Mission_Numbots-6
+    FileTimeStamp = true
+    DoublePrecision = 3
+    CompressAlogs = false
+    MAX_DIR_SIZE = 475 //MB
+    WildCardLogging = true
+    SyncLog = true @ 1.0
+    AsyncLog = true
+
+
+LOG = Accel @ 0.2
+LOG = Batt_Health @ 0.2
+LOG = Change_State @ 0.2
+LOG = Comm_Ping @ 0.2
+LOG = Current_Pos @ 0.2
+LOG = id @ 1.0
+LOG = Motor_Odom @ 0.2
+LOG = Speed_Curv @ 0.2
+LOG = Update_Pos @ 0.2
+LOG = Veh_Health @ 0.2
+
+WildCardOmitPattern = DB*
+WildCardOmitPattern = APPCAST
+WildCardOmitPattern = APPCAST_REQ
+WildCardOmitPattern = *ITER_GAP
+WildCardOmitPattern = *_ITER_LEN
+WildCardOmitPattern = *_STATUS
+WildCardOmitPattern = *PLOGGER*
+}
+ProcessConfig = UserInterface
+{
+   AppTick   = 4
+   CommsTick = 4
+   NumOfBots = 6
+}
+
+ProcessConfig = pShare
+{
+     Input = route=localhost:9000
+     Input = route=multicast_1
+     Output = src_name=Change_State, route=multicast_1
+     Output = src_name=LOG_BOOKMARK, route=multicast_1
+     Output = src_name=BOUNDARY_SIZE, route=multicast_1
+     Output = src_name=RUN_ENDED, route=multicast_1
+     Output = src_name=RUN_STARTED, route=multicast_1
+     Output=src_name=Dolphin0_Update_Pos,dest_name=Update_Pos,route=localhost:8305
+     Output=src_name=Dolphin0_Change_State,dest_name=Change_State,route=localhost:8305
+     Output=src_name=Dolphin0_Reg_Ack,dest_name=Reg_Ack,route=localhost:8305
+     Output=src_name=Dolphin0_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8305
+     Output=src_name=Dolphin0_Zeta_Init,dest_name=Zeta_Init,route=localhost:8305
+     Output=src_name=Dolphin0_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8305
+     Output=src_name=Dolphin0_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8305
+     Output=src_name=Dolphin0_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8305
+     Output=src_name=Dolphin0_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8305
+     Output=src_name=Dolphin1_Update_Pos,dest_name=Update_Pos,route=localhost:8310
+     Output=src_name=Dolphin1_Change_State,dest_name=Change_State,route=localhost:8310
+     Output=src_name=Dolphin1_Reg_Ack,dest_name=Reg_Ack,route=localhost:8310
+     Output=src_name=Dolphin1_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8310
+     Output=src_name=Dolphin1_Zeta_Init,dest_name=Zeta_Init,route=localhost:8310
+     Output=src_name=Dolphin1_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8310
+     Output=src_name=Dolphin1_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8310
+     Output=src_name=Dolphin1_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8310
+     Output=src_name=Dolphin1_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8310
+     Output=src_name=Dolphin2_Update_Pos,dest_name=Update_Pos,route=localhost:8315
+     Output=src_name=Dolphin2_Change_State,dest_name=Change_State,route=localhost:8315
+     Output=src_name=Dolphin2_Reg_Ack,dest_name=Reg_Ack,route=localhost:8315
+     Output=src_name=Dolphin2_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8315
+     Output=src_name=Dolphin2_Zeta_Init,dest_name=Zeta_Init,route=localhost:8315
+     Output=src_name=Dolphin2_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8315
+     Output=src_name=Dolphin2_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8315
+     Output=src_name=Dolphin2_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8315
+     Output=src_name=Dolphin2_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8315
+     Output=src_name=Dolphin3_Update_Pos,dest_name=Update_Pos,route=localhost:8320
+     Output=src_name=Dolphin3_Change_State,dest_name=Change_State,route=localhost:8320
+     Output=src_name=Dolphin3_Reg_Ack,dest_name=Reg_Ack,route=localhost:8320
+     Output=src_name=Dolphin3_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8320
+     Output=src_name=Dolphin3_Zeta_Init,dest_name=Zeta_Init,route=localhost:8320
+     Output=src_name=Dolphin3_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8320
+     Output=src_name=Dolphin3_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8320
+     Output=src_name=Dolphin3_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8320
+     Output=src_name=Dolphin3_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8320
+     Output=src_name=Dolphin4_Update_Pos,dest_name=Update_Pos,route=localhost:8325
+     Output=src_name=Dolphin4_Change_State,dest_name=Change_State,route=localhost:8325
+     Output=src_name=Dolphin4_Reg_Ack,dest_name=Reg_Ack,route=localhost:8325
+     Output=src_name=Dolphin4_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8325
+     Output=src_name=Dolphin4_Zeta_Init,dest_name=Zeta_Init,route=localhost:8325
+     Output=src_name=Dolphin4_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8325
+     Output=src_name=Dolphin4_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8325
+     Output=src_name=Dolphin4_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8325
+     Output=src_name=Dolphin4_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8325
+     Output=src_name=Dolphin5_Update_Pos,dest_name=Update_Pos,route=localhost:8330
+     Output=src_name=Dolphin5_Change_State,dest_name=Change_State,route=localhost:8330
+     Output=src_name=Dolphin5_Reg_Ack,dest_name=Reg_Ack,route=localhost:8330
+     Output=src_name=Dolphin5_Neighbor_Zeta,dest_name=Neighbor_Zeta,route=localhost:8330
+     Output=src_name=Dolphin5_Zeta_Init,dest_name=Zeta_Init,route=localhost:8330
+     Output=src_name=Dolphin5_Speed_Curv,dest_name=Speed_Curv_Override,route=localhost:8330
+     Output=src_name=Dolphin5_BLACK_LINE_DETECTED,dest_name=BLACK_LINE_DETECTED,route=localhost:8330
+     Output=src_name=Dolphin5_VERSION_ACK,dest_name=VERSION_ACK,route=localhost:8330
+     Output=src_name=Dolphin5_OBJECT_DETECTED,dest_name=OBJECT_DETECTED,route=localhost:8330
+}
+
+
+
