@@ -2,4 +2,4 @@
 .vscode/**
 *.json
 *.script
-test_logs/*.zip
+*.zip
