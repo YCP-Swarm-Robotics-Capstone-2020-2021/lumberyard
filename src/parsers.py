@@ -3,7 +3,7 @@ import re
 import json
 import sys
 
-fp = '../test_logs/Run_Allstop/2021-02-25-07-20-00_Mission_Numbots-6/LOG_Narwhal_25_2_2021_____07_20_03/LOG_Narwhal_25_2_2021_____07_20_03.alog'
+fp = '../test_logs/Run_Allstop/2021-02-25-07-14-50_Mission_Numbots-4/LOG_Dolphin0_25_2_2021_____07_14_52/LOG_Dolphin0_25_2_2021_____07_14_52.alog'
 # Log parser for the web application
 # Parameter is the file path of the log
 def web_parser(file_path):
@@ -56,7 +56,7 @@ def web_parser(file_path):
         "log_type": log_type,
         "log_content": []
     }
-
+    parsed_set = set()
     runs = []
 
     # Current run is outside the scope of the for loop, since it needs to persist each iteration
@@ -72,7 +72,8 @@ def web_parser(file_path):
             'process': process,
             'data': data
         }
-
+        
+        parsed_set.add((time, module, process, data))
         parsed['log_content'].append(parsed_line)
 
         # Check to see if the current line is a start of stop marker for a run
@@ -81,23 +82,39 @@ def web_parser(file_path):
 
             # Parse id and place in current run
             run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
-            # noinspection PyDictCreation
-            current_run = {
-                run_id: {
-                    'start_time': parsed_line['time'],
-                    'stop_time': ''
+            if len(runs) != 0:
+                for i in runs:
+                    if run_id not in i.keys():
+                        # noinspection PyDictCreation
+                        current_run = {
+                            run_id: {
+                                'start_time': parsed_line['time'],
+                                'stop_time': ''
+                            }
+                        }
+
+            else:
+                # noinspection PyDictCreation
+                current_run = {
+                    run_id: {
+                        'start_time': parsed_line['time'],
+                        'stop_time': ''
+                    }
                 }
-            }
 
         elif parsed_line['module'] == 'RUN_ENDED' and current_run != '':
-
-            # Parse stop time
+            # Ensure that another run's end message hasn't occured before the current one
             run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
-            current_run[run_id]['stop_time'] = parsed_line['time']
+            if run_id in current_run.keys():
+                # Parse stop time
+                current_run[run_id]['stop_time'] = parsed_line['time']
 
-            # Append current run to runs list, and clear the current run
-            runs.append(current_run)
-            current_run = ''
+                # Append current run to runs list, and clear the current run
+
+                runs.append(current_run)
+                current_run = ''
+
+    print(parsed_set)
 
     # Close log file
     file.close()
@@ -105,8 +122,8 @@ def web_parser(file_path):
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
     # file = open(file.name + ".json", "w+")
-    print(json.dumps(runs))
-    return json.dumps(parsed)
+    # print(json.dumps(runs))
+    return json.dumps(parsed), json.dumps(runs)
 
 
 web_parser(fp)
