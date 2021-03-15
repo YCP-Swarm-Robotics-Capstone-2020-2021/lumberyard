@@ -3,7 +3,7 @@ import re
 import json
 import sys
 
-fp = '../test_logs/Run_Allstop/2021-02-25-07-14-50_Mission_Numbots-4/LOG_Dolphin0_25_2_2021_____07_14_52/LOG_Dolphin0_25_2_2021_____07_14_52.alog'
+
 # Log parser for the web application
 # Parameter is the file path of the log
 def web_parser(file_path):
@@ -61,22 +61,23 @@ def web_parser(file_path):
     parsed_set = set()
     runs = []
 
+    # Read the file, and place the tuples of the lines in the set
     for line in itertools.islice(file, 5, None):
         line = line.rstrip()
         # Each line is composed of <timestamp> <module> <process> <data>
         (time, module, process, data) = line.split(maxsplit=3)
         parsed_set.add((time, module, process, data))
 
+    # Convert set to list, then sort
     parsed_list = list(parsed_set)
     parsed_list.sort(key=sort_on)
-    # for i in range(len(parsed_list)):
-    # print(parsed_list[i])
 
     # Current run is outside the scope of the for loop, since it needs to persist each iteration
     current_run = ''
     current_run_id = -111
     record_run = False
 
+    # Iterate sorted list and created json objects
     for i in parsed_list:
         parsed_line = {
             'time': i[0],
@@ -85,6 +86,7 @@ def web_parser(file_path):
             'data': i[3]
         }
         parsed['log_content'].append(parsed_line)
+
         # Check to see if the current line is a start of stop marker for a run
         # If the current run is empty, then start filling out the current run
         if parsed_line['module'] == 'RUN_STARTED' and current_run == '':
@@ -105,18 +107,17 @@ def web_parser(file_path):
             record_run = True
 
         elif parsed_line['module'] == 'RUN_ENDED' and current_run != '':
-            if current_run_id in current_run.keys():
 
-                # Parse stop time
-                current_run[current_run_id]['stop_time'] = parsed_line['time']
+            # Parse stop time
+            current_run[current_run_id]['stop_time'] = parsed_line['time']
 
-                # Append stop line to run
-                current_run[current_run_id]['run_content'].append(parsed_line)
+            # Append stop line to run
+            current_run[current_run_id]['run_content'].append(parsed_line)
 
-                # Append current run to runs list, and clear the current run
-                runs.append(current_run)
-                current_run = ''
-                record_run = False
+            # Append current run to runs list, and clear the current run
+            runs.append(current_run)
+            current_run = ''
+            record_run = False
 
         if record_run:
             # Append stop line to run
@@ -128,17 +129,13 @@ def web_parser(file_path):
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
     # file = open(file.name + ".json", "w+")
-    # file.write(json.dumps(runs[0]))
-    # print(json.dumps(runs)[0])
+    # file.write(json.dumps(runs))
     return json.dumps(parsed), json.dumps(runs)
 
 
 # This function defines what to sort the list on. The tuple has the timestamp in the first position
 def sort_on(e):
     return float(e[0])
-
-
-web_parser(fp)
 
 
 # Log parser for visualization script generation
