@@ -74,6 +74,8 @@ def web_parser(file_path):
 
     # Current run is outside the scope of the for loop, since it needs to persist each iteration
     current_run = ''
+    current_run_id = -111
+    record_run = False
 
     for i in parsed_list:
         parsed_line = {
@@ -88,49 +90,46 @@ def web_parser(file_path):
         if parsed_line['module'] == 'RUN_STARTED' and current_run == '':
 
             # Parse id and place in current run
-            run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
-            if len(runs) != 0:
-                for i in runs:
-                    if run_id not in i.keys():
-                        # noinspection PyDictCreation
-                        current_run = {
-                            run_id: {
-                                'start_time': parsed_line['time'],
-                                'stop_time': ''
-                            }
-                        }
+            current_run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
 
-            else:
-                # noinspection PyDictCreation
-                current_run = {
-                    run_id: {
-                        'start_time': parsed_line['time'],
-                        'stop_time': ''
-                    }
+            # noinspection PyDictCreation
+            current_run = {
+                current_run_id: {
+                    'start_time': parsed_line['time'],
+                    'stop_time': '',
+                    'run_content': []
                 }
+            }
+
+            # Start recording the run
+            record_run = True
 
         elif parsed_line['module'] == 'RUN_ENDED' and current_run != '':
-            # Ensure that another run's end message hasn't occured before the current one
-            run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
-            if run_id in current_run.keys():
+            if current_run_id in current_run.keys():
+
                 # Parse stop time
-                current_run[run_id]['stop_time'] = parsed_line['time']
+                current_run[current_run_id]['stop_time'] = parsed_line['time']
+
+                # Append stop line to run
+                current_run[current_run_id]['run_content'].append(parsed_line)
 
                 # Append current run to runs list, and clear the current run
-
                 runs.append(current_run)
                 current_run = ''
+                record_run = False
 
-
+        if record_run:
+            # Append stop line to run
+            current_run[current_run_id]['run_content'].append(parsed_line)
 
     # Close log file
     file.close()
 
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
-    #file = open(file.name + ".json", "w+")
-    #file.write(json.dumps(parsed_list))
-    # print(json.dumps(parsed_list))
+    # file = open(file.name + ".json", "w+")
+    # file.write(json.dumps(runs[0]))
+    # print(json.dumps(runs)[0])
     return json.dumps(parsed), json.dumps(runs)
 
 
