@@ -56,26 +56,33 @@ def web_parser(file_path):
         "log_type": log_type,
         "log_content": []
     }
+
+    # This set will filter duplicates out, and then be sorted on timestamp
     parsed_set = set()
     runs = []
-
-    # Current run is outside the scope of the for loop, since it needs to persist each iteration
-    current_run = ''
 
     for line in itertools.islice(file, 5, None):
         line = line.rstrip()
         # Each line is composed of <timestamp> <module> <process> <data>
         (time, module, process, data) = line.split(maxsplit=3)
-        parsed_line = {
-            'time': time,
-            'module': module,
-            'process': process,
-            'data': data
-        }
-        
         parsed_set.add((time, module, process, data))
-        parsed['log_content'].append(parsed_line)
 
+    parsed_list = list(parsed_set)
+    parsed_list.sort(key=sort_on)
+    # for i in range(len(parsed_list)):
+    # print(parsed_list[i])
+
+    # Current run is outside the scope of the for loop, since it needs to persist each iteration
+    current_run = ''
+
+    for i in parsed_list:
+        parsed_line = {
+            'time': i[0],
+            'module': i[1],
+            'process': i[2],
+            'data': i[3]
+        }
+        parsed['log_content'].append(parsed_line)
         # Check to see if the current line is a start of stop marker for a run
         # If the current run is empty, then start filling out the current run
         if parsed_line['module'] == 'RUN_STARTED' and current_run == '':
@@ -114,19 +121,26 @@ def web_parser(file_path):
                 runs.append(current_run)
                 current_run = ''
 
-    print(parsed_set)
+
 
     # Close log file
     file.close()
 
     # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
-    # file = open(file.name + ".json", "w+")
-    # print(json.dumps(runs))
+    #file = open(file.name + ".json", "w+")
+    #file.write(json.dumps(parsed_list))
+    # print(json.dumps(parsed_list))
     return json.dumps(parsed), json.dumps(runs)
 
 
+# This function defines what to sort the list on. The tuple has the timestamp in the first position
+def sort_on(e):
+    return float(e[0])
+
+
 web_parser(fp)
+
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
