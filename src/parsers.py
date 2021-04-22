@@ -3,7 +3,7 @@ import re
 import json
 import sys
 
-fp = '../test_logs/2021-04-05-Mission_Logs/2021-04-05-10-47-53_Mission_Numbots-5/LOG_Narwhal_5_4_2021_____10_47_57/LOG_Narwhal_5_4_2021_____10_47_57.alog'
+fp = '../test_logs/Run_Allstop/2021-02-25-07-20-00_Mission_Numbots-6/LOG_Dolphin4_25_2_2021_____07_20_03/LOG_Dolphin4_25_2_2021_____07_20_03.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
@@ -104,11 +104,10 @@ def web_parser(file_path):
 
             # noinspection PyDictCreation
             current_run = {
-                current_run_id: {
-                    'start_time': parsed_line['time'],
-                    'stop_time': '',
-                    'run_content': []
-                }
+                'run_id': current_run_id,
+                'start_time': parsed_line['time'],
+                'stop_time': '',
+                'run_content': []
             }
 
             # Start recording the run
@@ -117,10 +116,10 @@ def web_parser(file_path):
         elif parsed_line['module'] == 'RUN_ENDED' and current_run != '':
 
             # Parse stop time
-            current_run[current_run_id]['stop_time'] = parsed_line['time']
+            current_run['stop_time'] = parsed_line['time']
 
             # Append stop line to run
-            current_run[current_run_id]['run_content'].append(parsed_line)
+            current_run['run_content'].append(parsed_line)
 
             # Append current run to runs list, and clear the current run
             runs.append(current_run)
@@ -129,7 +128,7 @@ def web_parser(file_path):
 
         if record_run:
             # Append stop line to run
-            current_run[current_run_id]['run_content'].append(parsed_line)
+            current_run['run_content'].append(parsed_line)
 
     # Close log file
     file.close()
@@ -137,10 +136,22 @@ def web_parser(file_path):
     # Open new json file, write the json contents, and close it
     with open(file_path + ".json", "w+") as file:
         file.write(json.dumps(parsed))
+    # Return the information on the log for storing in DB
+    try:
+        del parsed['log_content']
+    except KeyError:
+        print('Error removing log_content from dict')
+    print(json.dumps(parsed))
 
     for run in runs:
-        with open(file_path + f"-run{list(run.keys())[0]}.json", "w+") as file:
+        run_key = run['run_id']
+        with open(file_path + f"-run{run_key}.json", "w+") as file:
             file.write(json.dumps(run))
+            try:
+                del run['run_content']
+            except KeyError:
+                print('Error removing run_content from dict')
+            print(json.dumps(run))
     # return json.dumps(parsed), json.dumps(runs)
 
 
