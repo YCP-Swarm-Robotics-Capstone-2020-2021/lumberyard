@@ -3,20 +3,22 @@ import re
 import json
 import sys
 
+fp = '../test_logs/2021-04-05-Mission_Logs/2021-04-05-10-47-53_Mission_Numbots-5/LOG_Narwhal_5_4_2021_____10_47_57/LOG_Narwhal_5_4_2021_____10_47_57.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
 def web_parser(file_path):
+
     # Open the log file in read mode
     file = open(file_path, 'r')
 
     # Check to see what type of log file this is, and set log_type and robot_id appropriately
     if "LOG_Narwhal" in file.name:
-        print("This is a Narwhal log")
+        # print("This is a Narwhal log")
         log_type = "Narwhal"
         device_id = "Narwhal"
     elif "LOG_Dolphin" in file.name:
-        print("This is a Dolphin log")
+        # print("This is a Dolphin log")
         log_type = "Dolphin"
         # Extract dolphin id
         robot_match = re.search(r'Dolphin\d+', file.name)
@@ -24,11 +26,11 @@ def web_parser(file_path):
         try:
             device_id = robot_match.group(0)
         except AttributeError:
-            print('Error finding robot id from file name')
+            # print('Error finding robot id from file name')
             sys.exit(1)
     # If the log does not contain dolphin or narwhal exit the parser
     else:
-        print('Log neither Dolphin nor Narwhal')
+        # print('Log neither Dolphin nor Narwhal')
         sys.exit(1)
 
     # Parse date and time from file path
@@ -57,28 +59,96 @@ def web_parser(file_path):
         "log_content": []
     }
 
+    # This set will filter duplicates out, and then be sorted on timestamp
+    parsed_set = set()
+    runs = []
+
+    # Read the file, and place the tuples of the lines in the set
     for line in itertools.islice(file, 5, None):
         line = line.rstrip()
-        # Each line is composed of <timestamp> <module> <process> <data>
-        (time, module, process, data) = line.split(maxsplit=3)
-        parsed_line = {
-            'time': time,
-            'module': module,
-            'process': process,
-            'data': data
-        }
+        try:
+            # Each line is composed of <timestamp> <module> <process> <data>
+            (time, module, process, data) = line.split(maxsplit=3)
+            # Check for null character
+            if '\u0000' in line:
+                data = data.split('\u0000')[0]
+            parsed_set.add((time, module, process, data))
+        except ValueError as e:
+            print("Key Value Error")
 
+    # Convert set to list, then sort
+    parsed_list = list(parsed_set)
+    parsed_list.sort(key=sort_on)
+
+    # Current run is outside the scope of the for loop, since it needs to persist each iteration
+    current_run = ''
+    current_run_id = -111
+    record_run = False
+
+    # Iterate sorted list and created json objects
+    for i in parsed_list:
+        parsed_line = {
+            'time': i[0],
+            'module': i[1],
+            'process': i[2],
+            'data': i[3]
+        }
         parsed['log_content'].append(parsed_line)
+
+        # Check to see if the current line is a start of stop marker for a run
+        # If the current run is empty, then start filling out the current run
+        if parsed_line['module'] == 'RUN_STARTED' and current_run == '':
+
+            # Parse id and place in current run
+            current_run_id = int(re.findall(r'[0-9]+', parsed_line['data'])[0])
+
+            # noinspection PyDictCreation
+            current_run = {
+                current_run_id: {
+                    'start_time': parsed_line['time'],
+                    'stop_time': '',
+                    'run_content': []
+                }
+            }
+
+            # Start recording the run
+            record_run = True
+
+        elif parsed_line['module'] == 'RUN_ENDED' and current_run != '':
+
+            # Parse stop time
+            current_run[current_run_id]['stop_time'] = parsed_line['time']
+
+            # Append stop line to run
+            current_run[current_run_id]['run_content'].append(parsed_line)
+
+            # Append current run to runs list, and clear the current run
+            runs.append(current_run)
+            current_run = ''
+            record_run = False
+
+        if record_run:
+            # Append stop line to run
+            current_run[current_run_id]['run_content'].append(parsed_line)
 
     # Close log file
     file.close()
 
-    # print(json.dumps(parsed))
     # Open new json file, write the json contents, and close it
-    # file = open(file.name + ".json", "w+")
-    return json.dumps(parsed)
+    with open(file_path + ".json", "w+") as file:
+        file.write(json.dumps(parsed))
+
+    for run in runs:
+        with open(file_path + f"-run{list(run.keys())[0]}.json", "w+") as file:
+            file.write(json.dumps(run))
+    # return json.dumps(parsed), json.dumps(runs)
 
 
+# This function defines what to sort the list on. The tuple has the timestamp in the first position
+def sort_on(e):
+    return float(e[0])
+
+web_parser(fp)
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
