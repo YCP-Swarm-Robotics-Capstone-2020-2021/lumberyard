@@ -3,7 +3,7 @@ import re
 import json
 import sys
 
-fp = '../test_logs/Run_Allstop/2021-02-25-07-20-00_Mission_Numbots-6/LOG_Dolphin4_25_2_2021_____07_20_03/LOG_Dolphin4_25_2_2021_____07_20_03.alog'
+fp = '../test_logs/2021-04-05-Mission_Logs/2021-04-05-09-54-22_Mission_Numbots-5/LOG_Narwhal_5_4_2021_____09_54_27/LOG_Narwhal_5_4_2021_____09_54_27.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
