@@ -3,7 +3,7 @@ import re
 import json
 import sys
 
-fp = '../test_logs/2021-04-05-Mission_Logs/2021-04-05-09-54-22_Mission_Numbots-5/LOG_Narwhal_5_4_2021_____09_54_27/LOG_Narwhal_5_4_2021_____09_54_27.alog'
+fp = '../test_logs/2021-04-29_Logs/2021-04-29-08-24-24_Mission_Numbots-4/LOG_Dolphin0_29_4_2021_____08_24_30/LOG_Dolphin0_29_4_2021_____08_24_30.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
@@ -82,7 +82,6 @@ def web_parser(file_path):
 
     # Current run is outside the scope of the for loop, since it needs to persist each iteration
     current_run = ''
-    current_run_id = -111
     record_run = False
 
     # Iterate sorted list and created json objects
@@ -110,6 +109,9 @@ def web_parser(file_path):
                 'run_content': []
             }
 
+            # Append current run to runs list, and clear the current run
+            runs.append(current_run)
+
             # Start recording the run
             record_run = True
 
@@ -121,8 +123,6 @@ def web_parser(file_path):
             # Append stop line to run
             current_run['run_content'].append(parsed_line)
 
-            # Append current run to runs list, and clear the current run
-            runs.append(current_run)
             current_run = ''
             record_run = False
 
