@@ -159,7 +159,7 @@ def web_parser(file_path):
 def sort_on(e):
     return float(e[0])
 
-web_parser(fp)
+#web_parser(fp)
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
@@ -329,3 +329,168 @@ def visualization_parser(file_path):
     file.write(json.dumps(output))
     file.close()
 
+def vparser(file_path):
+    with open(file_path, 'r') as f:
+        run = json.load(f)
+
+    # To which decimal place should the timestamp be rounded
+    TIME_ROUNDING = 1
+    # The increment in which the current time should progess when generating the final script.
+    # This corresponds to TIME_ROUNDING
+    TIME_INCREMENT = 0.1
+
+    start_time = round(float(run["start_time"]), TIME_ROUNDING)
+    stop_time = round(float(run["stop_time"]), TIME_ROUNDING)
+
+    # Which robots are reported as being connected at each timestamp
+    connected_robots = dict()  # dict(k: time, v: set(robot_id))
+
+    # Parsed script data
+    parsed = dict()  # dict(k: time, v: dict(k: id, v: data))
+
+    for obj in run["run_content"]:
+        time = round(float(obj["time"]), TIME_ROUNDING)
+
+        if "Registered_Bots" in obj["module"]:
+            # Data format is Bot_Ids=<id>:0|<id>:0|...
+            # TODO: I'm not sure what the ":0" postfix means
+            # Collect the robot ids
+            robots = obj["data"].split("=")[-1].split("|")
+            # Remove the ":0" from each id and discard any empty strings
+            robots = [robot.split(":")[0] for robot in robots if robot]
+            # Since this module lists ALL robots currently known to be connected, just directly set the connected robots
+            connected_robots[time] = set(robots)
+        elif "Reg_In" in obj["module"]:
+            # Data format is id=<id>
+            robot_id = obj["data"].split("=")[-1]
+            connected_robots.setdefault(time, set()).add(robot_id)
+        elif "Reg_Ack" in obj["module"]:
+            # Module format is <id>_Reg_Ack
+            robot_id = obj["module"].split("_")[0]
+            if "true" in obj["data"]:
+                connected_robots.setdefault(time, set()).add(robot_id)
+            else:
+                connected_robots.setdefault(time, set()).remove(robot_id)
+        # Update_Pos is robot reporting new position
+        elif "Update_Pos" in obj["module"]:
+            # Remove all whitespace from data
+            obj["data"] = re.sub(r"\s+", "", obj["data"]).split(",")
+
+            # Get key-value pairs from the data
+            items = dict()
+            for item in obj["data"]:
+                (lhs, rhs) = item.split("=")
+                items[lhs] = rhs
+
+            if "id" in items:
+                parsed.setdefault(time, dict())[items["id"]] = \
+                    {
+                        "x": round(float(items.get("xPos") or 0.0), 3),
+                        "y": round(float(items.get("yPos") or 0.0), 3),
+                        "r": round(float(items.get("attitude") or 0.0), 3),
+                        "s": round(float(items.get("current_speed") or 0.0), 3)
+                    }
+                
+    # Fill in any time gaps
+
+    current_time = start_time
+    # Last known connected status for each robot
+    prev_connected = set()
+    # Last known value for each robot
+    prev_data = dict()  # dict(k: id, v: data)
+
+    while current_time <= stop_time:
+        # Populate connected_robots with last known status if entry does not already exist,
+        # other update last known status
+        if current_time in connected_robots:
+            prev_connected = connected_robots[current_time]
+        else:
+            connected_robots[current_time] = prev_connected
+
+        # If parsed data has current time, update the last known data for each robot
+        if current_time in parsed:
+            for (robot_id, data) in parsed[current_time].items():
+                prev_data[robot_id] = data
+        else:
+            # Have to directly set this here instead of using `setdefault(time, dict())` later on to make sure that
+            # there is an empty entry here if no robots are connected
+            parsed[current_time] = dict()
+
+        # For the current time entry in the parsed data, fill in any missing robots with their last known data
+        # if the robot is still known to be connected
+        for (robot_id, data) in prev_data.items():
+            if robot_id not in parsed[current_time] and robot_id in connected_robots[current_time]:
+                parsed[current_time][robot_id] = data
+
+        current_time = round(current_time + TIME_INCREMENT, TIME_ROUNDING)
+   
+    # Remove any non updated robots for a given timestamp
+    # Last time updated pos for each robot
+    # NOTE: 'u' stands for 'updated' and 'nu' stands for 'notUpdated'. This is to 
+    # cut down the file size slightly by removing unnecessary characters
+    last_updated_times = dict()  # dict(k: robot_id, v: time)
+    for time in parsed.keys():
+        if parsed[time]:
+            idle_robots = []
+            parsed[time]['u'] = []
+            for (robot_id, data) in parsed[time].items():
+                if robot_id != 'u':
+                    # If it is robot's first update time, make last updated
+                    if robot_id not in last_updated_times.keys():
+                        last_updated_times[robot_id] = time
+                        # Add 'id' field and append to updated list
+                        data['id'] = robot_id
+                        parsed[time]['u'].append(data)
+                    else:
+                        # Get robot's data from it's last updated time
+                        # Add 'id' field
+                        last_updated_time = last_updated_times[robot_id]
+                        prev_data = parsed[last_updated_time][robot_id]
+                        data['id'] = robot_id
+
+                        # Compare with current data
+                        # If same, add to idle_robots list
+                        # If different, update last_updated_times
+                        if prev_data != data:
+                            last_updated_times[robot_id] = time
+                            parsed[time]['u'].append(data)
+                        else:
+                            idle_robots.append(robot_id)
+
+            # Add 'notUpdated' object to each timestamp
+            parsed[time]['nu'] = []
+            # For each idle robot for this timestamp delete it's entry, and add robot_id to 'notUpdated' object
+            for robot_id in idle_robots:
+                del parsed[time][robot_id]
+                parsed[time]['nu'].append(robot_id)
+
+    # Remove any first level 'Dolphin__: {}' objects, since there is now a first level 'updated: []' list for each timestamp
+    for time in parsed.keys():
+        if parsed[time]:
+            for data in parsed[time]['u']:
+                del parsed[time][data['id']]
+
+    # Change the values of parsed into lists rather than dictionaries
+    # This is to prevent many small hashmaps from being created while deserializing the script in the visualization
+    listified_parsed = dict()
+    for (time, states) in parsed.items():
+        if parsed[time]:
+            updated_data = states['u']
+            not_updated_date = states['nu']
+
+            listified_parsed[time] = {"u": [], "nu": []}
+
+            listified_parsed[time]['u'] = updated_data
+            listified_parsed[time]['nu'] = not_updated_date
+        else:
+            parsed[time]['u'] = []
+            parsed[time]['nu'] = []
+
+    output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": stop_time,
+            "timestamps": listified_parsed}
+
+    with open(file_path + ".script", "w+") as f:
+        f.write(json.dumps(output))
+
+fp = '../test_logs/LOG_Narwhal_29_4_2021_____09_23_18.alog-run55.json'
+vparser(fp)
