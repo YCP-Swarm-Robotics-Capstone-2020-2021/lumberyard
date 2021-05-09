@@ -339,8 +339,8 @@ def vparser(file_path):
     # This corresponds to TIME_ROUNDING
     TIME_INCREMENT = 0.1
 
-    start_time = round(float(run["start_time"]), TIME_ROUNDING)
-    stop_time = round(float(run["stop_time"]), TIME_ROUNDING)
+    start_time = round(float(run["run_content"][-1]["time"]), TIME_ROUNDING)
+    stop_time = 0
 
     # Which robots are reported as being connected at each timestamp
     connected_robots = dict()  # dict(k: time, v: set(robot_id))
@@ -352,6 +352,7 @@ def vparser(file_path):
         time = round(float(obj["time"]), TIME_ROUNDING)
 
         if "Registered_Bots" in obj["module"]:
+
             # Data format is Bot_Ids=<id>:0|<id>:0|...
             # TODO: I'm not sure what the ":0" postfix means
             # Collect the robot ids
@@ -373,6 +374,9 @@ def vparser(file_path):
                 connected_robots.setdefault(time, set()).remove(robot_id)
         # Update_Pos is robot reporting new position
         elif "Update_Pos" in obj["module"]:
+            if time < start_time: start_time = time
+            if time > stop_time: stop_time = time
+
             # Remove all whitespace from data
             obj["data"] = re.sub(r"\s+", "", obj["data"]).split(",")
 
@@ -472,21 +476,23 @@ def vparser(file_path):
 
     # Change the values of parsed into lists rather than dictionaries
     # This is to prevent many small hashmaps from being created while deserializing the script in the visualization
-    listified_parsed = dict()
+    listified_parsed = list()
     for (time, states) in parsed.items():
         if parsed[time]:
             updated_data = states['u']
             not_updated_date = states['nu']
 
-            listified_parsed[time] = {"u": [], "nu": []}
+            timestamp = {"t": time, "u": [], "nu": []}
 
-            listified_parsed[time]['u'] = updated_data
-            listified_parsed[time]['nu'] = not_updated_date
+            timestamp['u'] = updated_data
+            timestamp['nu'] = not_updated_date
+
+            listified_parsed.append(timestamp)
         else:
             parsed[time]['u'] = []
             parsed[time]['nu'] = []
 
-    output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": stop_time,
+    output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timestart": start_time, "timeend": stop_time,
             "timestamps": listified_parsed}
 
     with open(file_path + ".script", "w+") as f:
