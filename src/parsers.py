@@ -158,7 +158,7 @@ def web_parser(file_path):
         except KeyError:
             print('Error removing run_content from dict')
         print(json.dumps(run))
-    # return json.dumps(parsed), json.dumps(runs)
+    return json.dumps(parsed), json.dumps(runs)
 
 
 # This function defines what to sort the list on. The tuple has the timestamp in the first position
@@ -334,4 +334,3 @@ def visualization_parser(input_json, output_file):
 
     with open(output_file, "w+") as f:
         f.write(json.dumps(output))
-
