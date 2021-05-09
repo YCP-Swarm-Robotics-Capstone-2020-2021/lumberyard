@@ -3,7 +3,6 @@ import re
 import json
 import sys
 
-fp = '../test_logs/2021-04-29_Logs/2021-04-29-08-24-24_Mission_Numbots-4/LOG_Dolphin0_29_4_2021_____08_24_30/LOG_Dolphin0_29_4_2021_____08_24_30.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
@@ -145,13 +144,20 @@ def web_parser(file_path):
 
     for run in runs:
         run_key = run['run_id']
-        with open(file_path + f"-run{run_key}.json", "w+") as file:
+        # Log name with run appended to it
+        run_name = file_path + f"-run{run_key}"
+        # Write the run
+        with open(run_name + ".json", "w+") as file:
             file.write(json.dumps(run))
-            try:
-                del run['run_content']
-            except KeyError:
-                print('Error removing run_content from dict')
-            print(json.dumps(run))
+        # If it's a Narwhal log file, run it through the visualization parser
+        if "Narwhal" in log_type:
+            visualization_parser(run, run_name.replace(".alog", "") + ".script")
+        # Delete the run_content from the dictionary to do some memory cleanup
+        try:
+            del run['run_content']
+        except KeyError:
+            print('Error removing run_content from dict')
+        print(json.dumps(run))
     # return json.dumps(parsed), json.dumps(runs)
 
 
@@ -159,82 +165,82 @@ def web_parser(file_path):
 def sort_on(e):
     return float(e[0])
 
-web_parser(fp)
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
-def visualization_parser(file_path):
-    file = open(file_path, "r")
+def visualization_parser(input_json, output_file):
+
     # To which decimal place should the timestamp be rounded
     TIME_ROUNDING = 1
     # The increment in which the current time should progess when generating the final script.
     # This corresponds to TIME_ROUNDING
     TIME_INCREMENT = 0.1
 
+    start_time = round(float(input_json["run_content"][-1]["time"]), TIME_ROUNDING)
+    stop_time = 0
+
     # Which robots are reported as being connected at each timestamp
     connected_robots = dict()  # dict(k: time, v: set(robot_id))
 
     # Parsed script data
     parsed = dict()  # dict(k: time, v: dict(k: id, v: data))
-    # Time at the end of the log
-    end_time = 0
 
-    for line in itertools.islice(file, 5, None):
-        line = line.rstrip()
-        # Each line is composed of <timestamp> <module> <process> <data>
-        (time, module, _, data) = line.split(maxsplit=3)
-        time = round(float(time), TIME_ROUNDING)
-        end_time = time
+    for obj in input_json["run_content"]:
+        time = round(float(obj["time"]), TIME_ROUNDING)
 
-        # Recognize that robot has connected or failed to indicate that it is still connected
-        if "Registered_Bots" in module:
+        if "Registered_Bots" in obj["module"]:
+
             # Data format is Bot_Ids=<id>:0|<id>:0|...
             # TODO: I'm not sure what the ":0" postfix means
             # Collect the robot ids
-            robots = data.split("=")[-1].split("|")
+            robots = obj["data"].split("=")[-1].split("|")
             # Remove the ":0" from each id and discard any empty strings
             robots = [robot.split(":")[0] for robot in robots if robot]
             # Since this module lists ALL robots currently known to be connected, just directly set the connected robots
             connected_robots[time] = set(robots)
-        elif "Reg_In" in module:
+        elif "Reg_In" in obj["module"]:
             # Data format is id=<id>
-            robot_id = data.split("=")[-1]
+            robot_id = obj["data"].split("=")[-1]
             connected_robots.setdefault(time, set()).add(robot_id)
-        elif "Reg_Ack" in module:
+        elif "Reg_Ack" in obj["module"]:
             # Module format is <id>_Reg_Ack
-            robot_id = module.split("_")[0]
-            if "true" in data:
+            robot_id = obj["module"].split("_")[0]
+            if "true" in obj["data"]:
                 connected_robots.setdefault(time, set()).add(robot_id)
             else:
                 connected_robots.setdefault(time, set()).remove(robot_id)
         # Update_Pos is robot reporting new position
-        elif "Update_Pos" in module:
+        elif "Update_Pos" in obj["module"]:
+            if time < start_time: start_time = time
+            if time > stop_time: stop_time = time
+
             # Remove all whitespace from data
-            data = re.sub(r"\s+", "", data).split(",")
+            obj["data"] = re.sub(r"\s+", "", obj["data"]).split(",")
 
             # Get key-value pairs from the data
             items = dict()
-            for item in data:
+            for item in obj["data"]:
                 (lhs, rhs) = item.split("=")
                 items[lhs] = rhs
 
             if "id" in items:
-                entry = parsed.setdefault(time, dict())[items["id"]] = \
+                parsed.setdefault(time, dict())[items["id"]] = \
                     {
                         "x": round(float(items.get("xPos") or 0.0), 3),
                         "y": round(float(items.get("yPos") or 0.0), 3),
                         "r": round(float(items.get("attitude") or 0.0), 3),
                         "s": round(float(items.get("current_speed") or 0.0), 3)
                     }
-
+                
     # Fill in any time gaps
-    current_time = 0.0
+
+    current_time = start_time
     # Last known connected status for each robot
     prev_connected = set()
     # Last known value for each robot
     prev_data = dict()  # dict(k: id, v: data)
 
-    while current_time <= end_time:
+    while current_time <= stop_time:
         # Populate connected_robots with last known status if entry does not already exist,
         # other update last known status
         if current_time in connected_robots:
@@ -258,22 +264,24 @@ def visualization_parser(file_path):
                 parsed[current_time][robot_id] = data
 
         current_time = round(current_time + TIME_INCREMENT, TIME_ROUNDING)
-
+   
     # Remove any non updated robots for a given timestamp
     # Last time updated pos for each robot
+    # NOTE: 'u' stands for 'updated' and 'nu' stands for 'notUpdated'. This is to 
+    # cut down the file size slightly by removing unnecessary characters
     last_updated_times = dict()  # dict(k: robot_id, v: time)
     for time in parsed.keys():
         if parsed[time]:
             idle_robots = []
-            parsed[time]['updated'] = []
+            parsed[time]['u'] = []
             for (robot_id, data) in parsed[time].items():
-                if robot_id != 'updated':
+                if robot_id != 'u':
                     # If it is robot's first update time, make last updated
                     if robot_id not in last_updated_times.keys():
                         last_updated_times[robot_id] = time
                         # Add 'id' field and append to updated list
                         data['id'] = robot_id
-                        parsed[time]['updated'].append(data)
+                        parsed[time]['u'].append(data)
                     else:
                         # Get robot's data from it's last updated time
                         # Add 'id' field
@@ -286,46 +294,44 @@ def visualization_parser(file_path):
                         # If different, update last_updated_times
                         if prev_data != data:
                             last_updated_times[robot_id] = time
-                            parsed[time]['updated'].append(data)
+                            parsed[time]['u'].append(data)
                         else:
                             idle_robots.append(robot_id)
 
             # Add 'notUpdated' object to each timestamp
-            parsed[time]['notUpdated'] = []
+            parsed[time]['nu'] = []
             # For each idle robot for this timestamp delete it's entry, and add robot_id to 'notUpdated' object
             for robot_id in idle_robots:
                 del parsed[time][robot_id]
-                parsed[time]['notUpdated'].append(robot_id)
+                parsed[time]['nu'].append(robot_id)
 
     # Remove any first level 'Dolphin__: {}' objects, since there is now a first level 'updated: []' list for each timestamp
     for time in parsed.keys():
         if parsed[time]:
-            for data in parsed[time]['updated']:
+            for data in parsed[time]['u']:
                 del parsed[time][data['id']]
 
     # Change the values of parsed into lists rather than dictionaries
     # This is to prevent many small hashmaps from being created while deserializing the script in the visualization
-    listified_parsed = dict()
+    listified_parsed = list()
     for (time, states) in parsed.items():
         if parsed[time]:
-            updated_data = states['updated']
-            not_updated_date = states['notUpdated']
+            updated_data = states['u']
+            not_updated_date = states['nu']
 
-            listified_parsed[time] = {"updated": [], "notUpdated": []}
+            timestamp = {"t": time, "u": [], "nu": []}
 
-            listified_parsed[time]['updated'] = updated_data
-            listified_parsed[time]['notUpdated'] = not_updated_date
+            timestamp['u'] = updated_data
+            timestamp['nu'] = not_updated_date
+
+            listified_parsed.append(timestamp)
         else:
-            parsed[time]['updated'] = []
-            parsed[time]['notUpdated'] = []
+            parsed[time]['u'] = []
+            parsed[time]['nu'] = []
 
-    # print(json.dumps(parsed, indent=4))
+    output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timestart": start_time, "timeend": stop_time,
+            "timestamps": listified_parsed}
 
-    output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timeend": end_time,
-              "timestamps": listified_parsed}
-
-    file.close()
-    file = open(file_path + ".script", "w+")
-    file.write(json.dumps(output))
-    file.close()
+    with open(output_file, "w+") as f:
+        f.write(json.dumps(output))
 
