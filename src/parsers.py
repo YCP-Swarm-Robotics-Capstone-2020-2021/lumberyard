@@ -145,13 +145,20 @@ def web_parser(file_path):
 
     for run in runs:
         run_key = run['run_id']
-        with open(file_path + f"-run{run_key}.json", "w+") as file:
+        # Log name with run appended to it
+        run_name = file_path + f"-run{run_key}"
+        # Write the run
+        with open(run_name + ".json", "w+") as file:
             file.write(json.dumps(run))
-            try:
-                del run['run_content']
-            except KeyError:
-                print('Error removing run_content from dict')
-            print(json.dumps(run))
+        # If it's a Narwhal log file, run it through the visualization parser
+        if "Narwhal" in log_type:
+            visualization_parser(run, run_name.replace(".alog", "") + ".script")
+        # Delete the run_content from the dictionary to do some memory cleanup
+        try:
+            del run['run_content']
+        except KeyError:
+            print('Error removing run_content from dict')
+        print(json.dumps(run))
     # return json.dumps(parsed), json.dumps(runs)
 
 
@@ -162,9 +169,7 @@ def sort_on(e):
 
 # Log parser for visualization script generation
 # Currently, this just parses the Narwhal's log file
-def visualization_parser(file_path):
-    with open(file_path, 'r') as f:
-        run = json.load(f)
+def visualization_parser(input_json, output_file):
 
     # To which decimal place should the timestamp be rounded
     TIME_ROUNDING = 1
@@ -172,7 +177,7 @@ def visualization_parser(file_path):
     # This corresponds to TIME_ROUNDING
     TIME_INCREMENT = 0.1
 
-    start_time = round(float(run["run_content"][-1]["time"]), TIME_ROUNDING)
+    start_time = round(float(input_json["run_content"][-1]["time"]), TIME_ROUNDING)
     stop_time = 0
 
     # Which robots are reported as being connected at each timestamp
@@ -181,7 +186,7 @@ def visualization_parser(file_path):
     # Parsed script data
     parsed = dict()  # dict(k: time, v: dict(k: id, v: data))
 
-    for obj in run["run_content"]:
+    for obj in input_json["run_content"]:
         time = round(float(obj["time"]), TIME_ROUNDING)
 
         if "Registered_Bots" in obj["module"]:
@@ -328,10 +333,9 @@ def visualization_parser(file_path):
     output = {"timeinc": TIME_INCREMENT, "timeround": TIME_ROUNDING, "timestart": start_time, "timeend": stop_time,
             "timestamps": listified_parsed}
 
-    with open(file_path + ".script", "w+") as f:
+    with open(output_file, "w+") as f:
         f.write(json.dumps(output))
 
 
+fp = "../test_logs/test/LOG_Narwhal_29_4_2021_____09_23_18.alog"
 web_parser(fp)
-fp = '../test_logs/LOG_Narwhal_29_4_2021_____09_23_18.alog-run55.json'
-visualization_parser(fp)
