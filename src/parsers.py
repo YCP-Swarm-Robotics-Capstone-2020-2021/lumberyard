@@ -3,7 +3,6 @@ import re
 import json
 import sys
 
-fp = '../test_logs/2021-04-29_Logs/2021-04-29-08-24-24_Mission_Numbots-4/LOG_Dolphin0_29_4_2021_____08_24_30/LOG_Dolphin0_29_4_2021_____08_24_30.alog'
 
 # Log parser for the web application
 # Parameter is the file path of the log
@@ -336,6 +335,3 @@ def visualization_parser(input_json, output_file):
     with open(output_file, "w+") as f:
         f.write(json.dumps(output))
 
-
-fp = "../test_logs/test/LOG_Narwhal_29_4_2021_____09_23_18.alog"
-web_parser(fp)
